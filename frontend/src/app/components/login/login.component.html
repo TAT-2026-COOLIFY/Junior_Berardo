@@ -1,0 +1,115 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-icon-box">
+      <span>🍨</span>
+    </div>
+
+    <div class="login-header">
+      <h1>PremiArte Açaí</h1>
+      <p>Painel de Vendas & Estoque</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="fazerLogin()">
+      <div class="form-group">
+        <label>E-mail de Acesso</label>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="Ex: admin@premiarte.com"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <div class="label-com-link">
+          <label>Senha Administrativa</label>
+          <a type="button" class="link-esqueci" (click)="abrirModalEsqueci()">Esqueceu a senha?</a>
+        </div>
+        <input
+          type="password"
+          [(ngModel)]="senha"
+          name="senha"
+          placeholder="••••"
+          required
+        />
+      </div>
+
+      <div *ngIf="mensagemErro" class="mensagem-erro">
+        {{ mensagemErro }}
+      </div>
+
+      <div *ngIf="mensagemSucesso" class="mensagem-sucesso">
+        {{ mensagemSucesso }}
+      </div>
+
+      <button type="submit" class="btn-entrar" [disabled]="carregando">
+        {{ carregando ? 'ENTRANDO...' : 'ENTRAR NO SISTEMA' }}
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE REDEFINIÇÃO DE SENHA -->
+<div class="modal-overlay" *ngIf="modalEsqueciAberto">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>Redefinir Senha</h2>
+      <button class="btn-fechar-modal" (click)="fecharModalEsqueci()">✕</button>
+    </div>
+
+    <form (ngSubmit)="salvarNovaSenha()">
+      <div class="modal-body">
+        <p class="modal-instrucao">Informe o e-mail cadastrado e defina uma nova senha para sua conta.</p>
+
+        <div class="form-group-modal">
+          <label>E-mail Cadastrado</label>
+          <input
+            type="email"
+            [(ngModel)]="emailRecuperacao"
+            name="emailRecuperacao"
+            placeholder="Ex: admin@premiarte.com"
+            required
+          />
+        </div>
+
+        <div class="form-group-modal">
+          <label>Nova Senha</label>
+          <input
+            type="password"
+            [(ngModel)]="novaSenha"
+            name="novaSenha"
+            placeholder="Mínimo 4 caracteres"
+            required
+          />
+        </div>
+
+        <div class="form-group-modal">
+          <label>Confirmar Nova Senha</label>
+          <input
+            type="password"
+            [(ngModel)]="confirmarNovaSenha"
+            name="confirmarNovaSenha"
+            placeholder="Repita a nova senha"
+            required
+          />
+        </div>
+
+        <div *ngIf="erroRecuperacao" class="mensagem-erro">
+          {{ erroRecuperacao }}
+        </div>
+
+        <div *ngIf="sucessoRecuperacao" class="mensagem-sucesso">
+          {{ sucessoRecuperacao }}
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancelar" (click)="fecharModalEsqueci()">Cancelar</button>
+        <button type="submit" class="btn-modal-salvar" [disabled]="carregandoRecuperacao">
+          {{ carregandoRecuperacao ? 'Salvando...' : 'Salvar Nova Senha' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

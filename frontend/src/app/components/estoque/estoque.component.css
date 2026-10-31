@@ -1,0 +1,643 @@
+.top-header {
+    margin-bottom: 25px;
+}
+
+.top-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+/* CARD DE FORMULÁRIO */
+.card-cadastro-estoque {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 35px;
+    border: 1px solid #f0f0f5;
+}
+
+.form-grid-estoque {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    margin-bottom: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2e1d75;
+}
+
+.form-group input,
+.form-group select {
+    background: #f8f9fd;
+    border: 1.5px solid #edf2f7;
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 13px;
+    color: #2d3436;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2e1d75;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(46, 29, 117, 0.1);
+}
+
+/* AÇÕES DO FORMULÁRIO (UM EM CADA LADO) */
+.acoes-formulario-estoque {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* BOTÃO DE MAIS CIRCULAR (ESQUERDA) */
+.btn-circulo-mais {
+    width: 44px;
+    height: 44px;
+    background-color: #ffda2d;
+    color: #2e1d75;
+    border: none;
+    border-radius: 50%;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(255, 218, 45, 0.45);
+    transition: all 0.2s ease;
+}
+
+.btn-circulo-mais:hover {
+    transform: scale(1.1);
+    filter: brightness(1.08);
+}
+
+/* BOTÃO CONFIRMAR PRODUTO VERDE (DIREITA) */
+.btn-confirmar-verde {
+    background-color: #2ecc71;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(46, 204, 113, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-confirmar-verde:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(46, 204, 113, 0.45);
+}
+
+/* LISTAGEM DE CATEGORIAS E ITENS */
+.secao-categoria {
+    margin-bottom: 30px;
+}
+
+.cat-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.yellow-accent-bar {
+    width: 4px;
+    height: 18px;
+    background-color: #ffda2d;
+    border-radius: 4px;
+}
+
+.cat-title-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2e1d75;
+}
+
+/* BOTÃO EXCLUIR CATEGORIA */
+.btn-excluir-categoria {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    margin-left: 2px;
+    transition: all 0.2s ease;
+}
+
+.btn-excluir-categoria:hover {
+    color: #e53e3e;
+    transform: scale(1.15);
+}
+
+.grid-itens-estoque {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.card-item-estoque {
+    background: #ffffff;
+    border: 1px solid #f0f0f5;
+    border-radius: 20px;
+    padding: 16px 20px;
+    min-width: 170px;
+    max-width: 200px;
+    position: relative;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+/* ========================================================== */
+/* MENU DE OPÇÕES DO ITEM DE ESTOQUE                          */
+/* ========================================================== */
+
+.menu-produto-estoque {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    z-index: 20;
+}
+
+.btn-menu-produto {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #a0aec0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-menu-produto:hover {
+    background-color: #f8f9fd;
+    color: #2e1d75;
+}
+
+.menu-opcoes-produto {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    min-width: 155px;
+    background: #ffffff;
+    border: 1px solid #f0f0f5;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+}
+
+.menu-opcoes-produto button {
+    width: 100%;
+    display: block;
+    padding: 9px 11px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #2d3436;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.menu-opcoes-produto button:hover {
+    background-color: #f8f9fd;
+    color: #2e1d75;
+}
+
+.menu-opcoes-produto .opcao-excluir-produto {
+    color: #e53e3e;
+}
+
+.menu-opcoes-produto .opcao-excluir-produto:hover {
+    background-color: #fff1f1;
+    color: #c53030;
+}
+
+/* ========================================================== */
+/* NOME E QUANTIDADE DO ITEM                                  */
+/* ========================================================== */
+
+.item-nome {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d3436;
+    line-height: 1.3;
+}
+
+.badge-quantidade {
+    background-color: #eef2ff;
+    /* ======== CORREÇÃO DE CONTRASTE ======== */
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 12px;
+}
+
+.item-vazio-msg {
+    color: #a0aec0;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* ========================================================== */
+/* MOVIMENTAÇÃO DE ESTOQUE                                    */
+/* ========================================================== */
+
+.card-movimentacao-estoque {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 35px;
+    border: 1px solid #f0f0f5;
+}
+
+.titulo-movimentacao {
+    margin-bottom: 22px;
+}
+
+.titulo-movimentacao h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.titulo-movimentacao p {
+    margin: 0;
+    font-size: 13px;
+    color: #a0aec0;
+}
+
+.form-grid-movimentacao {
+    display: grid;
+    grid-template-columns: 2fr 1.3fr 1fr 1.2fr;
+    gap: 18px;
+    align-items: end;
+    margin-bottom: 20px;
+}
+
+/* TEXTAREA */
+
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 80px;
+    background: #f8f9fd;
+    border: 1.5px solid #edf2f7;
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #2d3436;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-group textarea:focus {
+    border-color: #2e1d75;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(46, 29, 117, 0.1);
+}
+
+/* AÇÕES DA MOVIMENTAÇÃO */
+
+.acoes-movimentacao {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+
+/* ========================================================== */
+/* INVENTÁRIO GERAL                                           */
+/* ========================================================== */
+
+.card-inventario-geral {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 35px;
+    border: 1px solid #f0f0f5;
+}
+
+.tabela-inventario {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.linha-cabecalho-inventario,
+.linha-inventario {
+    display: grid;
+    grid-template-columns:
+        2fr
+        1.5fr
+        1fr
+        1.2fr
+        1.5fr;
+    gap: 15px;
+    align-items: center;
+    min-width: 700px;
+}
+
+.linha-cabecalho-inventario {
+    background: #f8f9fd;
+    border-radius: 14px;
+    padding: 13px 16px;
+    margin-bottom: 8px;
+}
+
+.linha-cabecalho-inventario span {
+    font-size: 11px;
+    font-weight: 800;
+    color: #2e1d75;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.linha-inventario {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f0f0f5;
+    transition: background-color 0.2s ease;
+}
+
+.linha-inventario:hover {
+    background-color: #fafbff;
+}
+
+.linha-inventario span {
+    font-size: 12px;
+    color: #4a5568;
+}
+
+.linha-inventario span:first-child {
+    color: #2d3436;
+}
+
+.linha-inventario span:first-child strong {
+    font-weight: 700;
+}
+
+.status-inventario {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.status-sem-estoque {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-estoque-baixo {
+    background: #fff7cc;
+    color: #b77900;
+}
+
+.status-estoque-normal {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+
+/* ========================================================== */
+/* GIRO DE ESTOQUE                                            */
+/* ========================================================== */
+
+.card-giro-estoque {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 35px;
+    border: 1px solid #f0f0f5;
+}
+
+.tabela-giro-estoque {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.linha-cabecalho-giro,
+.linha-giro {
+    display: grid;
+    grid-template-columns:
+        2fr
+        1.5fr
+        1.5fr;
+    gap: 15px;
+    align-items: center;
+    min-width: 600px;
+}
+
+.linha-cabecalho-giro {
+    background: #f8f9fd;
+    border-radius: 14px;
+    padding: 13px 16px;
+    margin-bottom: 8px;
+}
+
+.linha-cabecalho-giro span {
+    font-size: 11px;
+    font-weight: 800;
+    color: #2e1d75;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.linha-giro {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f0f0f5;
+    transition: background-color 0.2s ease;
+}
+
+.linha-giro:hover {
+    background-color: #fafbff;
+}
+
+.linha-giro span {
+    font-size: 12px;
+    color: #4a5568;
+}
+
+.linha-giro span:first-child {
+    color: #2d3436;
+}
+
+.linha-giro span:first-child strong {
+    font-weight: 700;
+}
+
+
+/* ========================================================== */
+/* HISTÓRICO DE MOVIMENTAÇÕES                                 */
+/* ========================================================== */
+
+.card-historico-estoque {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 35px;
+    border: 1px solid #f0f0f5;
+}
+
+.tabela-movimentacoes {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.linha-cabecalho-movimentacao,
+.linha-movimentacao {
+    display: grid;
+    grid-template-columns:
+        1.3fr
+        1.8fr
+        1.3fr
+        1fr
+        1.3fr
+        2fr;
+    gap: 15px;
+    align-items: center;
+    min-width: 850px;
+}
+
+.linha-cabecalho-movimentacao {
+    background: #f8f9fd;
+    border-radius: 14px;
+    padding: 13px 16px;
+    margin-bottom: 8px;
+}
+
+.linha-cabecalho-movimentacao span {
+    font-size: 11px;
+    font-weight: 800;
+    color: #2e1d75;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.linha-movimentacao {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f0f0f5;
+    transition: background-color 0.2s ease;
+}
+
+.linha-movimentacao:hover {
+    background-color: #fafbff;
+}
+
+.linha-movimentacao span {
+    font-size: 12px;
+    color: #4a5568;
+}
+
+.linha-movimentacao span:nth-child(2) {
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.linha-movimentacao span:nth-child(3) strong {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #5c46c1;
+    font-size: 11px;
+}
+
+
+/* ========================================================== */
+/* RESPONSIVIDADE                                             */
+/* ========================================================== */
+
+@media (max-width: 1000px) {
+
+    .form-grid-movimentacao {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .linha-cabecalho-movimentacao,
+    .linha-movimentacao {
+        min-width: 800px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .card-movimentacao-estoque,
+    .card-historico-estoque,
+    .card-inventario-geral,
+    .card-giro-estoque {
+        padding: 22px 18px;
+        border-radius: 22px;
+    }
+
+    .form-grid-movimentacao {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .acoes-movimentacao {
+        justify-content: stretch;
+    }
+
+    .acoes-movimentacao .btn-confirmar-verde {
+        width: 100%;
+    }
+
+}

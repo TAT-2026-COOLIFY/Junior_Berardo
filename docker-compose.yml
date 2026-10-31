@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app/backend  # Garante que o banco SQLite não seja apagado
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4201:4200"
+    depends_on:
+      - backend

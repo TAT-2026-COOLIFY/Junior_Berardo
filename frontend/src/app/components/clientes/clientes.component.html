@@ -1,0 +1,169 @@
+<div class="clientes-page">
+
+  <!-- TÍTULO PRINCIPAL -->
+  <div class="top-header">
+    <h1>Clube de Clientes</h1>
+  </div>
+
+  <!-- CARD 1: CADASTRAR OU EDITAR CLIENTE -->
+  <div class="card-secao">
+    <div class="secao-header">
+      <div class="icon-avatar">👤</div>
+      <div>
+        <h2>{{ modoEdicao ? 'Editar Dados do Cliente' : 'Cadastrar Novo Cliente' }}</h2>
+        <p class="subtitulo">
+          {{ modoEdicao ? 'Alteração de credenciais ativas no ecossistema' : 'Inserção de dados no Clube de Clientes PremiArte' }}
+        </p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="salvarCliente()" class="form-grid">
+      <div class="form-group flex-2">
+        <label>Nome Completo *</label>
+        <input type="text" [(ngModel)]="novoCliente.nome" name="nome" placeholder="Ex: Maria Oliveira" required />
+      </div>
+
+      <div class="form-group flex-1">
+        <label>CPF *</label>
+        <input type="text" [(ngModel)]="novoCliente.cpf" (input)="aplicarMascaraCPF($event)" name="cpf" placeholder="000.000.000-00" maxlength="14" required [disabled]="modoEdicao" />
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Telefone / WhatsApp *</label>
+        <input type="text" [(ngModel)]="novoCliente.telefone" (input)="aplicarMascaraTelefone($event)" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required />
+      </div>
+
+      <div class="btn-wrap">
+        <button type="submit" class="btn-cadastrar-amarelo">
+          <span class="plus-icon">{{ modoEdicao ? '💾' : '+' }}</span>
+          {{ modoEdicao ? 'Salvar Alterações' : 'Cadastrar Cliente' }}
+        </button>
+        <button type="button" *ngIf="modoEdicao" (click)="cancelarEdicao()" class="btn-cancelar-edicao-link">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- CARD 2: DEFINIR PREMIAÇÃO -->
+  <div class="card-secao">
+    <div class="secao-header">
+      <div class="icon-avatar icon-amarelo">🏆</div>
+      <div>
+        <h2>Definir Premiação</h2>
+        <p class="subtitulo">
+          O gerente define quantos pontos serão necessários e qual prêmio o cliente receberá
+        </p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="salvarPremiacao()" class="form-grid">
+      <div class="form-group flex-2">
+        <label>Selecionar Cliente *</label>
+        <select [(ngModel)]="premiacaoSelecionada.cliente_id" name="cliente_id" required>
+          <option [ngValue]="null" disabled>Selecione um cliente...</option>
+          <option *ngFor="let c of clientes" [ngValue]="c.id">{{ c.nome }} ({{ c.cpf || 'Sem CPF' }})</option>
+        </select>
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Pontos necessários *</label>
+        <input type="number" [(ngModel)]="premiacaoSelecionada.pontos" name="pontos" min="1" step="1" placeholder="Ex: 10" required />
+      </div>
+
+      <div class="form-group flex-2">
+        <label>Qual será a premiação? *</label>
+        <input type="text" [(ngModel)]="premiacaoSelecionada.premio" name="premio" placeholder="Ex: Açaí 500ml grátis" required />
+      </div>
+
+      <div class="btn-wrap">
+        <button type="submit" class="btn-aplicar-roxo" [disabled]="clientes.length === 0">
+          🏆 Definir Premiação
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- CARD 3: CLIENTES CADASTRADOS -->
+  <div class="card-secao">
+    <div class="secao-header">
+      <div>
+        <h2>Clientes Cadastrados</h2>
+        <p class="subtitulo">Lista de membros do Clube de Clientes, pontuação e premiações</p>
+      </div>
+    </div>
+
+    <div class="tabela-container">
+      <table class="tabela-clientes">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>CPF</th>
+            <th>Telefone</th>
+            <th class="text-center">Pontos</th>
+            <th class="text-center">Premiação Ativa</th>
+            <th class="text-center">Ações Operacionais</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let c of clientes">
+            <td>
+              <div class="cliente-info">
+                <span class="avatar-tag">{{ getIniciais(c.nome) }}</span>
+                <strong>{{ c.nome }}</strong>
+              </div>
+            </td>
+
+            <td>{{ c.cpf || '-' }}</td>
+            <td>{{ c.telefone || '-' }}</td>
+
+            <td class="text-center">
+              <strong class="pontos-contador-texto">⭐ {{ c.compras_realizadas || 0 }}</strong>
+            </td>
+
+            <td class="text-center">
+              <span class="badge-premiacao" [class.badge-vazio]="c.premiacao === 'Sem Premiação' || !c.premiacao">
+                {{ c.premiacao || 'Sem Premiação' }}
+              </span>
+              <div *ngIf="premiacaoDisponivel(c)" class="mensagem-premio-disponivel">
+                🎉 Prêmio disponível!
+              </div>
+            </td>
+
+            <td class="text-center">
+              <div class="wrapper-botoes-acoes-clientes">
+                <button *ngIf="premiacaoDisponivel(c)" type="button" class="btn-resgatar-premio" (click)="resgatarPremiacao(c)">
+                  🏆 RESGATAR
+                </button>
+
+                <span *ngIf="!premiacaoDisponivel(c) && c.premiacao && c.premiacao !== 'Sem Premiação'" class="texto-aguardando-pontos">
+                  Aguardando pontos
+                </span>
+
+                <span *ngIf="!c.premiacao || c.premiacao === 'Sem Premiação'" class="texto-sem-premio">
+                  Sem prêmio
+                </span>
+
+                <button type="button" class="btn-editar-cliente-tabela" (click)="prepararEdicao(c)" title="Editar dados cadastrais">
+                  ✏️ Editar
+                </button>
+
+                <button type="button" class="btn-excluir-venda-tabela" (click)="excluirCliente(c.id)" title="Remover cliente do sistema">
+                  🗑️ Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="clientes.length === 0">
+            <td colspan="6" class="mensagem-vazio-tabela">
+              Nenhum cliente cadastrado no Clube de Fidelidade.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

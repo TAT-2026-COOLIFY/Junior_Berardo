@@ -1,0 +1,362 @@
+<!-- ========================================== -->
+<!-- TOPO E BARRA DE BUSCA                      -->
+<!-- ========================================== -->
+<div class="header-vendas">
+  <h1>Frente de Caixa</h1>
+
+  <div class="header-actions">
+    <button class="btn-novo-produto" (click)="abrirModalNovoProduto()">
+      <span class="icon">+</span> Novo Produto
+    </button>
+
+    <button type="button" class="btn-nova-categoria" (click)="modalOpcoesAberto = true" title="Adicionar nova categoria">
+      <span class="icon">+</span> Nova Categoria
+    </button>
+
+    <div class="search-box">
+      <input type="text" [(ngModel)]="termoBusca" placeholder="Qual o pedido de..." />
+      <button *ngIf="termoBusca" class="btn-limpar-busca" (click)="termoBusca = ''" title="Limpar busca">×</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- CONTEÚDO PRINCIPAL (DUAS COLUNAS)          -->
+<!-- ========================================== -->
+<div class="layout-columns">
+
+  <!-- ÁREA CENTRAL (CARDÁPIO POR CATEGORIA) -->
+  <div class="sessao-central">
+
+    <ng-container *ngFor="let cat of categorias">
+      <div class="categoria-secao" *ngIf="!cat.nome.toLowerCase().includes('recheio')">
+
+        <!-- Título da Categoria + Botão de Excluir Categoria -->
+        <div class="cat-title-container" style="display: flex; justify-content: space-between; width: 100%;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="yellow-accent-bar"></div>
+            <span class="cat-title-text">{{ cat.nome }}</span>
+          </div>
+
+          <button type="button" class="btn-cancelar-card" style="flex: 0; padding: 6px 12px; margin-right: 15px;"
+              *ngIf="getProdutosFiltradosPorCategoria(cat.id || cat.idCategoria).length === 0"
+              (click)="excluirCategoria(cat)">
+              Remover Categoria
+          </button>
+        </div>
+
+        <!-- Grade de Produtos (Filtrada para evitar caixas vazias) -->
+        <div class="grid-vendas">
+          <div class="card-produto" *ngFor="let p of getProdutosFiltradosPorCategoria(cat.id || cat.idCategoria)">
+
+            <!-- Menu de Opções (3 pontinhos) -->
+            <div class="menu-produto-estoque">
+              <button type="button" class="btn-menu-produto" (click)="produtoMenuAberto = (produtoMenuAberto === p.id ? null : p.id)" title="Opções">⋮</button>
+              <div class="menu-opcoes-produto" *ngIf="produtoMenuAberto === p.id">
+                <button type="button" class="opcao-editar-produto" (click)="abrirModalEditarProduto(p); produtoMenuAberto = null" style="color: #2e1d75;">Editar produto</button>
+                <button type="button" class="opcao-excluir-produto" (click)="retirarDeVenda(p.id); produtoMenuAberto = null">Excluir produto</button>
+              </div>
+            </div>
+
+            <!-- Imagem -->
+            <div class="card-img-placeholder">
+              <img *ngIf="p.imagem" [src]="p.imagem" class="card-img-real" (error)="p.imagem = ''" />
+              <span *ngIf="!p.imagem" class="material-symbols-rounded">icecream</span>
+            </div>
+
+            <!-- Nome e Preço -->
+            <strong>{{ p.nome }}</strong>
+            <div class="preco-card">
+              <span>R$</span>
+              <span class="valor-preco-card">{{ (p.preco || 0).toFixed(2).replace('.', ',') }}</span>
+            </div>
+
+            <!-- Status do Estoque (Visível apenas se for bebida) -->
+            <span class="status-estoque-container" *ngIf="cat.nome === 'Bebidas lata' || cat.nome === 'Bebidas garrafas'" [style.color]="(p.quantidade || 0) <= 0 ? '#ff4757' : '#666'">
+              <ng-container *ngIf="(p.quantidade || 0) > 0">
+                Estoque: <strong>{{ p.quantidade }}</strong>
+              </ng-container>
+              <ng-container *ngIf="(p.quantidade || 0) <= 0">
+                <strong>Sem estoque</strong>
+              </ng-container>
+            </span>
+
+            <!-- Botões de Ação -->
+            <div class="detalhes-hover">
+              <div class="acoes-card-botoes">
+                <button type="button" class="btn-cancelar-card" (click)="removerProdutoDoCarrinho(p)">Retirar</button>
+                <button type="button" class="btn-add-card" (click)="adicionarAoCarrinho(p)">+ Adicionar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- Mensagem de Busca Vazia -->
+    <div *ngIf="temProdutosExibidos() === false" class="caixa-branca text-center">
+      Nenhum produto encontrado com o termo "<strong>{{ termoBusca }}</strong>".
+    </div>
+  </div>
+
+  <!-- PAINEL LATERAL (CARRINHO E CHECKOUT) -->
+  <div class="summary-panel">
+
+    <!-- NOVO CARD DO CARRINHO BRANCO -->
+    <div class="card-carrinho-detalhes">
+      <h3>Itens do Pedido</h3>
+
+      <div *ngIf="carrinho.length === 0" class="carrinho-vazio-msg">
+        Seu carrinho está vazio.
+      </div>
+
+      <div id="carrinho-lista" *ngIf="carrinho.length > 0">
+        <div class="item-carrinho-linha" *ngFor="let item of carrinho; let i = index">
+
+          <div>
+            <strong>{{ item.quantidade_carrinho }}x</strong> {{ item.nome }}
+            <!-- Se o sistema calculou este recheio como gratuito, mostra o aviso -->
+            <div *ngIf="item.preco_unitario_tela === 0 && isRecheio(item)" style="font-size: 11px; color: #2ecc71; margin-top: 2px; font-weight: 800;">
+              (Grátis)
+            </div>
+          </div>
+
+          <div class="item-carrinho-dir">
+            <strong>R$ {{ item.preco_total.toFixed(2).replace('.', ',') }}</strong>
+            <button class="btn-remover" (click)="removerDoCarrinho(i)" title="Remover item">×</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD AMARELO DE CHECKOUT -->
+    <div class="card-amarelo-checkout">
+      <span class="label-total">Total a Pagar</span>
+      <h2 class="valor-total">R$ {{ totalVenda.toFixed(2).replace('.', ',') }}</h2>
+
+      <!-- Cliente -->
+      <div class="form-pagamento-box">
+        <label>Clube de Clientes:</label>
+        <select [(ngModel)]="clienteSelecionadoId">
+          <option [ngValue]="null">Venda Avulsa (Sem Cliente)</option>
+          <option *ngFor="let cli of clientes" [ngValue]="cli.id">{{ cli.nome }}</option>
+        </select>
+
+        <button type="button" (click)="modalClienteAberto = true" style="margin-top: 8px; width: 100%; padding: 10px; border-radius: 12px; border: none; background: #ffffff; color: #2e1d75; font-weight: 700; font-size: 12px; cursor: pointer;">
+          + Cadastrar Novo Cliente
+        </button>
+
+        <!-- Box de Fidelidade -->
+        <div *ngIf="clienteSelecionadoId !== null" style="background: rgba(255,255,255,0.5); padding: 10px; border-radius: 12px; margin-top: 10px; font-size: 12px; color: #2e1d75;">
+          <ng-container *ngFor="let cli of clientes">
+            <div *ngIf="cli.id === clienteSelecionadoId">
+              <div>Pontos atuais: <strong>{{ cli.compras_realizadas || 0 }}</strong></div>
+              <div>Premiação: <strong>{{ cli.premiacao || 'Sem Premiação' }}</strong></div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Forma de Pagamento -->
+      <div class="form-pagamento-box">
+        <label>Pagamento:</label>
+        <select [(ngModel)]="metodoPagamento">
+          <option value="Dinheiro">💵 Dinheiro</option>
+          <option value="PIX">⚡ PIX</option>
+          <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+          <option value="Cartão de Débito">💳 Cartão de Débito</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-concluir-pedido" (click)="finalizarVenda()">
+        CONCLUIR PEDIDO
+      </button>
+
+      <button type="button" class="btn-cancelar-venda-text" (click)="cancelarVenda()">
+        Cancelar Pedido
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAIS (Popups)                            -->
+<!-- ========================================== -->
+
+<!-- MODAL DE ESCOLHA DE RECHEIOS -->
+<div *ngIf="modalRecheiosAberto" class="modal-overlay" (click)="fecharModalRecheios()">
+  <div class="modal-card" style="max-width: 450px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Escolha os Recheios</h2>
+      <button type="button" class="btn-fechar-modal" (click)="fecharModalRecheios()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <p style="color: #666; font-size: 13px; margin-top: 0; margin-bottom: 20px;">
+          Você tem direito a <strong>2 recheios grátis</strong> por copo. Adicionais custam <strong>R$ 2,00</strong> cada.
+      </p>
+
+      <div class="lista-recheios" style="max-height: 300px; overflow-y: auto; margin-bottom: 10px;">
+          <div *ngFor="let recheio of listaDeRecheiosDinamica" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f5;">
+              <span style="font-weight: 600; font-size: 14px; color: #2d3436;">{{ recheio.nome }}</span>
+
+              <div style="display: flex; align-items: center; gap: 12px;">
+                  <button type="button" (click)="alterarQtdRecheio(recheio, -1)" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: bold; color: #2d3436; display: flex; align-items: center; justify-content: center;">-</button>
+                  <span style="font-weight: bold; width: 20px; text-align: center; color: #2e1d75;">{{ recheio.quantidade_selecionada }}</span>
+                  <button type="button" (click)="alterarQtdRecheio(recheio, 1)" style="width: 32px; height: 32px; border-radius: 8px; border: none; background: #2ecc71; color: white; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">+</button>
+              </div>
+          </div>
+
+          <div *ngIf="listaDeRecheiosDinamica.length === 0" style="text-align: center; padding: 20px; color: #a0aec0; font-style: italic;">
+              Nenhum recheio cadastrado no sistema.
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-modal-cancelar" (click)="fecharModalRecheios()">Cancelar</button>
+        <button type="button" class="btn-modal-salvar" (click)="confirmarAcaiComRecheios()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE NOVO PRODUTO -->
+<div *ngIf="modalAberto" class="modal-overlay" (click)="fecharModalNovoProduto()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Adicionar ao Cardápio</h2>
+      <button type="button" class="btn-fechar-modal" (click)="fecharModalNovoProduto()">×</button>
+    </div>
+
+    <form (ngSubmit)="salvarNovoProduto()">
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Nome do Produto</label>
+          <input type="text" name="nomeProd" [(ngModel)]="novoProduto.nome" placeholder="Ex: X-Bacon" required />
+        </div>
+
+        <div class="form-row-modal">
+          <div class="form-group-modal flex-1">
+            <label>Preço (R$)</label>
+            <input type="number" name="precoProd" [(ngModel)]="novoProduto.preco" placeholder="15.50" step="0.01" min="0" required />
+          </div>
+          <div class="form-group-modal flex-1">
+            <label>Categoria</label>
+            <select name="catProd" [(ngModel)]="novoProduto.categoria_id" required>
+              <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nome }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Ficha Técnica (Ingredientes p/ Estoque)</label>
+          <textarea name="ingredientesProd" [(ngModel)]="novoProduto.ingredientes" rows="3" placeholder="Ex: Pão, 1 Hambúrguer, Alface" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #f8f9fd; padding: 12px 14px; font-size: 13px; outline: none; width: 100%;"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancelar" (click)="fecharModalNovoProduto()">Cancelar</button>
+        <button type="submit" class="btn-modal-salvar">Salvar Produto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE EDITAR PRODUTO -->
+<div *ngIf="modalEditarAberto" class="modal-overlay" (click)="fecharModalEditarProduto()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Editar Produto</h2>
+      <button type="button" class="btn-fechar-modal" (click)="fecharModalEditarProduto()">×</button>
+    </div>
+
+    <form (ngSubmit)="salvarEdicaoProduto()">
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Nome do Produto (Bloqueado)</label>
+          <input type="text" name="editNomeProd" [(ngModel)]="produtoEmEdicao.nome" disabled style="opacity: 0.6; cursor: not-allowed;" />
+        </div>
+
+        <div class="form-row-modal">
+          <div class="form-group-modal flex-1">
+            <label>Preço (R$)</label>
+            <input type="number" name="editPrecoProd" [(ngModel)]="produtoEmEdicao.preco" step="0.01" min="0" required />
+          </div>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Ficha Técnica (Ingredientes)</label>
+          <textarea name="editIngredientesProd" [(ngModel)]="produtoEmEdicao.ingredientes" rows="3" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #f8f9fd; padding: 12px 14px; font-size: 13px; outline: none; width: 100%;"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-modal-cancelar" (click)="fecharModalEditarProduto()">Cancelar</button>
+        <button type="submit" class="btn-modal-salvar">Salvar Alterações</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE NOVA CATEGORIA -->
+<div *ngIf="modalOpcoesAberto" class="modal-overlay" (click)="modalOpcoesAberto = false">
+  <div class="modal-card" style="max-width: 400px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nova Categoria</h2>
+      <button type="button" class="btn-fechar-modal" (click)="modalOpcoesAberto = false">×</button>
+    </div>
+
+    <form (ngSubmit)="cadastrarCategoria()">
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Nome da Categoria</label>
+          <input type="text" name="nomeNovaCat" [(ngModel)]="novaCategoria.nome" placeholder="Ex: Bebidas" required />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancelar" (click)="modalOpcoesAberto = false">Cancelar</button>
+        <button type="submit" class="btn-modal-salvar">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE CADASTRO DE CLIENTE -->
+<div *ngIf="modalClienteAberto" class="modal-overlay modal-cliente-overlay" (click)="modalClienteAberto = false">
+  <div class="modal-card modal-cliente-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Cadastrar Cliente</h2>
+      <button type="button" class="btn-fechar-modal" (click)="modalClienteAberto = false">×</button>
+    </div>
+
+    <form (ngSubmit)="cadastrarCliente()">
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Nome completo</label>
+          <input type="text" name="nomeCliente" [(ngModel)]="novoCliente.nome" required />
+        </div>
+        <div class="form-group-modal">
+          <label>CPF</label>
+          <input type="text" name="cpfCliente" [(ngModel)]="novoCliente.cpf" (input)="aplicarMascaraCPF($event)" placeholder="000.000.000-00" required />
+        </div>
+        <div class="form-group-modal">
+          <label>Telefone/Celular</label>
+          <input type="text" name="telefoneCliente" [(ngModel)]="novoCliente.telefone" (input)="aplicarMascaraTelefone($event)" placeholder="(00) 00000-0000" required />
+        </div>
+        <p *ngIf="cpfInvalido || telefoneInvalido" style="color: #e74c3c; font-size: 12px; margin-top: 5px;">
+          Verifique se o CPF e o Telefone estão corretos.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancelar" (click)="modalClienteAberto = false">Cancelar</button>
+        <button type="submit" class="btn-modal-salvar">Cadastrar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>

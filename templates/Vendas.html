@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas - PremiArte Açaí</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ESTILOS DO MODAL DE CADASTRO DE PRODUTO */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h3 { margin: 0; color: #2e1d75; }
+        .btn-fechar {
+            background: none; border: none; cursor: pointer; color: #888;
+        }
+        .form-group-modal { margin-bottom: 15px; }
+        .form-group-modal label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #333; }
+        .form-group-modal input, .form-group-modal select {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- BARRA LATERAL -->
+        <aside class="sidebar">
+            <a href="{{ url_for('financeiro') }}">
+                <div class="logo-box">
+                    <span class="material-symbols-rounded">icecream</span>
+                    <span class="menu-name">PremiArte</span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('financeiro') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">grid_view</span>
+                    <span class="menu-name">Painel</span>
+                </a>
+                <a href="{{ url_for('vendas') }}" class="nav-icon active">
+                    <span class="material-symbols-rounded">shopping_cart</span>
+                    <span class="menu-name">Vendas</span>
+                </a>
+                <a href="{{ url_for('estoque') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">inventory_2</span>
+                    <span class="menu-name">Estoque</span>
+                </a>
+                <a href="{{ url_for('clientes') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">group</span>
+                    <span class="menu-name">Clientes</span>
+                </a>
+                <a href="{{ url_for('fornecedor_rota') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">person_add</span>
+                    <span class="menu-name">Fornecedores</span>
+                </a>
+                <hr class="sidebar-divider">
+                <a href="{{ url_for('logout') }}" class="nav-icon btn-logout-color">
+                    <span class="material-symbols-rounded">logout</span>
+                    <span class="menu-name">Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            <header class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>Frente de Caixa</h1>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button onclick="abrirModalProduto()" class="btn-roxo" style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 12px; border: none; cursor: pointer;">
+                        <span class="material-symbols-rounded">add_circle</span> Novo Produto
+                    </button>
+                    <div class="barra-busca" style="position: relative; width: 250px;">
+                        <input type="text" id="inputBusca" onkeyup="filtrar()" placeholder="Qual o pedido de hoje?" style="width: 100%; padding: 10px 15px; border-radius: 12px; border: 1px solid #ccc;">
+                    </div>
+                </div>
+            </header>
+
+            <div class="layout-columns">
+                <!-- SESSÃO CENTRAL COM TODOS OS PRODUTOS SEPARADOS POR CATEGORIA -->
+                <div class="sessao-central">
+                    {% for cat in categorias %}
+                        {% if cat.produtos and cat.produtos|length > 0 %}
+                            <div class="cat-title-container">
+                                <div class="yellow-accent-bar"></div>
+                                <span class="cat-title-text">{{ cat.nome }}</span>
+                            </div>
+
+                            <div class="grid-vendas">
+                                {% for p in cat.produtos %}
+                                    <div class="card-produto">
+                                        <!-- EXIBIÇÃO DA IMAGEM -->
+                                        {% if p.imagem %}
+                                            {% if p.imagem.startswith('http') %}
+                                                <img src="{{ p.imagem }}" class="card-img" alt="{{ p.nome }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1590301157890-4810ed352733?w=500';">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='img/' + p.imagem) }}" class="card-img" alt="{{ p.nome }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1590301157890-4810ed352733?w=500';">
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="card-img-placeholder">
+                                                <span class="material-symbols-rounded">icecream</span>
+                                            </div>
+                                        {% endif %}
+
+                                        <p class="card-item-nome"><strong>{{ p.nome }}</strong></p>
+
+                                        <div class="detalhes-hover">
+                                            <span class="preco-card">R$ {{ "%.2f"|format(p.preco or 0.0) | replace('.', ',') }}</span>
+                                            <small class="ingredientes-card">{{ p.ingredientes or '' }}</small>
+                                            <div class="acoes-hover">
+                                                <button class="btn-acao-card btn-remove-card" data-nome="{{ p.nome }}" data-preco="{{ p.preco or 0.0 }}" onclick="removerDoBotao(this)">
+                                                    <span class="material-symbols-rounded">remove</span>
+                                                </button>
+                                                <button class="btn-acao-card btn-add-card" data-nome="{{ p.nome }}" data-preco="{{ p.preco or 0.0 }}" onclick="adicionarDoBotao(this)">
+                                                    <span class="material-symbols-rounded">add</span> Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- PAINEL LATERAL DO CARRINHO -->
+                <aside class="summary-panel">
+                    <div class="card-amarelo">
+                        <p>Total a Pagar</p>
+                        <h2 id="total-venda">R$ 0,00</h2>
+
+                        <div class="form-pagamento-box">
+                            <label for="metodo_pagamento">Forma de Pagamento:</label>
+                            <select id="metodo_pagamento">
+                                <option value="Dinheiro">💵 Dinheiro</option>
+                                <option value="Pix">⚡ Pix</option>
+                                <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+                                <option value="Cartão de Débito">💳 Cartão de Débito</option>
+                            </select>
+                        </div>
+
+                        <button onclick="finalizar()" class="btn-roxo">CONCLUIR PEDIDO</button>
+                        <button onclick="cancelarVenda()" class="btn-cancelar-venda">CANCELAR VENDA</button>
+                    </div>
+
+                    <div class="card">
+                        <h4>Carrinho de Compras</h4>
+                        <div id="carrinho-lista">
+                            <p id="msg-vazio">Carrinho vazio</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE CADASTRAR NOVO PRODUTO -->
+    <div class="modal-overlay" id="modalNovoProduto">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Novo Produto no Cardápio</h3>
+                <button class="btn-fechar" onclick="fecharModalProduto()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <form action="{{ url_for('cadastrar_produto_venda') }}" method="POST">
+                <div class="form-group-modal">
+                    <label for="nome_prod">Nome do Produto:</label>
+                    <input type="text" id="nome_prod" name="nome" required placeholder="Ex: Açaí com Leite Ninho 400ml">
+                </div>
+                <div class="form-group-modal">
+                    <label for="preco_prod">Preço (R$):</label>
+                    <input type="number" step="0.01" id="preco_prod" name="preco" required placeholder="18.50">
+                </div>
+                <div class="form-group-modal">
+                    <label for="cat_prod">Categoria:</label>
+                    <select id="cat_prod" name="categoria_id" required>
+                        {% for cat in categorias %}
+                            <option value="{{ cat.idCategoria }}">{{ cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group-modal">
+                    <label for="ingredientes_prod">Ingredientes / Descrição:</label>
+                    <input type="text" id="ingredientes_prod" name="ingredientes" placeholder="Ex: Açaí, granola, banana e leite ninho">
+                </div>
+                <div class="form-group-modal">
+                    <label for="imagem_prod">URL da Imagem (opcional):</label>
+                    <input type="url" id="imagem_prod" name="imagem" placeholder="https://images.unsplash.com/...">
+                </div>
+                <button type="submit" class="btn-roxo" style="width: 100%; margin-top: 10px; padding: 12px;">CADASTRAR PRODUTO</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT DO CARRINHO, BUSCA E MODAL DE PRODUTOS -->
+    <script>
+        let carrinho = [];
+        let total = 0;
+
+        function abrirModalProduto() {
+            document.getElementById('modalNovoProduto').classList.add('active');
+        }
+
+        function fecharModalProduto() {
+            document.getElementById('modalNovoProduto').classList.remove('active');
+        }
+
+        function adicionarDoBotao(btn) {
+            const nome = btn.getAttribute('data-nome');
+            const preco = parseFloat(btn.getAttribute('data-preco'));
+            add(nome, preco);
+        }
+
+        function removerDoBotao(btn) {
+            const nome = btn.getAttribute('data-nome');
+            const preco = parseFloat(btn.getAttribute('data-preco'));
+            remove(nome, preco);
+        }
+
+        function add(nome, preco) {
+            carrinho.push({ nome: nome, preco: parseFloat(preco) });
+            total += parseFloat(preco);
+            atualizarTela();
+        }
+
+        function remove(nome, preco) {
+            const index = carrinho.map(item => item.nome).lastIndexOf(nome);
+            if (index !== -1) {
+                carrinho.splice(index, 1);
+                total -= parseFloat(preco);
+                atualizarTela();
+            }
+        }
+
+        function atualizarTela() {
+            const lista = document.getElementById('carrinho-lista');
+            const displayTotal = document.getElementById('total-venda');
+
+            if (carrinho.length === 0) {
+                lista.innerHTML = '<p id="msg-vazio">Carrinho vazio</p>';
+            } else {
+                const itensAgrupados = {};
+                carrinho.forEach(item => {
+                    if (itensAgrupados[item.nome]) {
+                        itensAgrupados[item.nome].qtd += 1;
+                        itensAgrupados[item.nome].subtotal += item.preco;
+                    } else {
+                        itensAgrupados[item.nome] = { qtd: 1, preco: item.preco, subtotal: item.preco };
+                    }
+                });
+
+                lista.innerHTML = '';
+                for (const [nomeItem, dados] of Object.entries(itensAgrupados)) {
+                    lista.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                            <span>${dados.qtd}x ${nomeItem}</span>
+                            <strong>R$ ${dados.subtotal.toFixed(2).replace('.', ',')}</strong>
+                        </div>`;
+                }
+            }
+            displayTotal.innerText = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
+        }
+
+        function finalizar() {
+            if (carrinho.length === 0) {
+                alert("Adicione itens ao carrinho antes de finalizar!");
+                return;
+            }
+
+            const metodoSelecionado = document.getElementById('metodo_pagamento').value;
+            fetch('/finalizar_venda_estatica', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ valor_total: total, metodo_pagamento: metodoSelecionado, itens: carrinho })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    alert("Pedido concluído com sucesso!");
+                    carrinho = [];
+                    total = 0;
+                    atualizarTela();
+                } else {
+                    alert("Erro ao finalizar venda: " + (data.erro || "Falha desconhecida"));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Erro ao se comunicar com o servidor.");
+            });
+        }
+
+        function cancelarVenda() {
+            if (carrinho.length > 0 && confirm("Deseja realmente limpar o carrinho?")) {
+                carrinho = [];
+                total = 0;
+                atualizarTela();
+            }
+        }
+
+        function filtrar() {
+            let busca = document.getElementById('inputBusca').value.toLowerCase();
+            let cards = document.getElementsByClassName('card-produto');
+            for (let card of cards) {
+                card.style.display = card.innerText.toLowerCase().includes(busca) ? "flex" : "none";
+            }
+        }
+    </script>
+</body>
+</html>

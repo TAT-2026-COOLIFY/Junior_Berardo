@@ -1,0 +1,8 @@
+Flask
+Flask-Cors
+Flask-SQLAlchemy
+fpdf
+PyJWT
+Flask-JWT-Extended
+bcrypt
+python-dotenv

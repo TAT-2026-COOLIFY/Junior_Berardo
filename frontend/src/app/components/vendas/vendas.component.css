@@ -1,0 +1,688 @@
+/* ============================================================== */
+/* 🔍 CABEÇALHO E BARRA DE BUSCA                                  */
+/* ============================================================== */
+.header-vendas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-vendas h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-novo-produto {
+    background-color: #2e1d75;
+    color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-novo-produto:hover {
+    filter: brightness(1.2);
+    transform: scale(1.02);
+}
+
+.btn-nova-categoria {
+    background-color: #ffda2d;
+    color: #2e1d75;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-nova-categoria:hover {
+    filter: brightness(1.05);
+    transform: scale(1.02);
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box input {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 35px 12px 18px;
+    font-size: 13px;
+    width: 220px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #2e1d75;
+    box-shadow: 0 0 0 2px rgba(46, 29, 117, 0.1);
+}
+
+.btn-limpar-busca {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #a0aec0;
+    cursor: pointer;
+}
+
+/* ============================================================== */
+/* 📐 ESTRUTURA DOS PAINÉIS (GRADE + LATERAL)                     */
+/* ============================================================== */
+.layout-columns {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    min-height: calc(100vh - 100px);
+    gap: 24px;
+    box-sizing: border-box;
+}
+
+.sessao-central {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: calc(100vh - 100px);
+    padding-bottom: 20px;
+}
+
+.categoria-secao {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.cat-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.yellow-accent-bar {
+    width: 4px;
+    height: 18px;
+    background-color: #ffda2d;
+    border-radius: 4px;
+}
+
+.cat-title-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+/* ============================================================== */
+/* 🍨 CARDS DE PRODUTOS                                           */
+/* ============================================================== */
+.grid-vendas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+}
+
+.card-produto {
+    background: #ffffff;
+    padding: 18px 14px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #f0f0f5;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.card-produto:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================================== */
+/* 🖼️ IMAGEM DO PRODUTO                                           */
+/* ============================================================== */
+.card-img-placeholder {
+    width: 100%;
+    max-width: 165px;
+    height: 125px;
+    border-radius: 18px;
+    background-color: #f8f9fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border: 1px dashed #e2e8f0;
+    overflow: hidden;
+}
+
+.card-img-real {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+.card-img-placeholder span.material-symbols-rounded {
+    font-size: 45px;
+    color: #a0aec0;
+}
+
+/* ============================================================== */
+/* 🏷️ NOME DO PRODUTO                                             */
+/* ============================================================== */
+.card-produto strong {
+    font-size: 14px;
+    color: #2d3436;
+    margin-bottom: 5px;
+    display: block;
+    line-height: 1.3;
+}
+
+/* ============================================================== */
+/* 💰 PREÇO DO PRODUTO                                            */
+/* ============================================================== */
+.preco-card {
+    color: #2ecc71;
+    font-weight: 700;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 2px;
+}
+
+.preco-card span:first-child {
+    font-weight: 700;
+}
+
+.valor-preco-card {
+    font-size: 17px;
+    font-weight: 800;
+    color: #2ecc71;
+}
+
+/* ============================================================== */
+/* 📦 ESTOQUE                                                     */
+/* ============================================================== */
+.status-estoque-container {
+    font-size: 12px !important;
+    margin-top: 5px !important;
+    line-height: 1.3;
+    display: block;
+}
+
+/* ============================================================== */
+/* 🔘 ÁREA DOS BOTÕES                                             */
+/* ============================================================== */
+.detalhes-hover {
+    width: 100%;
+    margin-top: 13px;
+}
+
+.acoes-card-botoes {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-cancelar-card {
+    flex: 1;
+    min-width: 0;
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 9px 4px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn-cancelar-card:hover {
+    background-color: #fecaca;
+    color: #b91c1c;
+}
+
+.btn-add-card {
+    flex: 1.3;
+    min-width: 0;
+    background-color: #2ecc71;
+    color: #ffffff;
+    border: none;
+    padding: 9px 4px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn-add-card:hover {
+    background-color: #27ae60;
+}
+
+/* ========================================================== */
+/* MENU DE OPÇÕES DO ITEM DE ESTOQUE                          */
+/* ========================================================== */
+
+.menu-produto-estoque {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    z-index: 20;
+}
+
+.btn-menu-produto {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #a0aec0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-menu-produto:hover {
+    background-color: #f8f9fd;
+    color: #2e1d75;
+}
+
+.menu-opcoes-produto {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    min-width: 155px;
+    background: #ffffff;
+    border: 1px solid #f0f0f5;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+}
+
+.menu-opcoes-produto button {
+    width: 100%;
+    display: block;
+    padding: 9px 11px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #2d3436;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.menu-opcoes-produto button:hover {
+    background-color: #f8f9fd;
+    color: #2e1d75;
+}
+
+.menu-opcoes-produto .opcao-excluir-produto {
+    color: #e53e3e;
+}
+
+.menu-opcoes-produto .opcao-excluir-produto:hover {
+    background-color: #fff1f1;
+    color: #c53030;
+}
+
+/* ============================================================== */
+/* 🛒 PAINEL LATERAL DIREITO (TOTAL + CARRINHO)                   */
+/* ============================================================== */
+.summary-panel {
+    width: 380px;
+    min-width: 380px;
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ============================================================== */
+/* 💛 CARD AMARELO                                               */
+/* ============================================================== */
+.card-amarelo-checkout {
+    background-color: #ffda2d;
+    border-radius: 28px;
+    padding: 25px;
+    color: #2e1d75;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.label-total {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2e1d75;
+}
+
+.valor-total {
+    font-size: 32px;
+    font-weight: 800;
+    color: #2e1d75;
+    margin: 6px 0 16px 0;
+}
+
+.form-pagamento-box label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2e1d75;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.form-pagamento-box select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2e1d75;
+    outline: none;
+    cursor: pointer;
+}
+
+.btn-concluir-pedido {
+    background-color: #2e1d75;
+    color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 15px;
+    font-weight: 800;
+    font-size: 13px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.btn-concluir-pedido:hover {
+    filter: brightness(1.2);
+}
+
+.btn-cancelar-venda-text {
+    background: transparent;
+    border: none;
+    color: #d97706;
+    font-weight: 800;
+    font-size: 12px;
+    margin-top: 12px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-cancelar-venda-text:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================== */
+/* 🛒 CARD BRANCO DO CARRINHO                                     */
+/* ============================================================== */
+.card-carrinho-detalhes {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    min-height: 180px;
+    border: 1px solid #f0f0f5;
+}
+
+.card-carrinho-detalhes h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 15px;
+}
+
+.carrinho-vazio-msg {
+    color: #a0aec0;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+#carrinho-lista {
+    max-height: 250px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#carrinho-lista::-webkit-scrollbar {
+    display: none;
+}
+
+.item-carrinho-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    font-size: 13px;
+    color: #2d3436;
+}
+
+.item-carrinho-dir {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-remover {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.caixa-branca {
+    background: #ffffff;
+    width: 100%;
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.text-center {
+    text-align: center;
+    color: #a0aec0;
+}
+
+/* ============================================================== */
+/* 🌟 MODAL DINÂMICO PARA NOVO PRODUTO E RECHEIOS                 */
+/* ============================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 480px;
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    color: #2e1d75;
+    font-weight: 700;
+}
+
+.btn-fechar-modal {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #a0aec0;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.form-group-modal {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group-modal label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2e1d75;
+    margin-bottom: 5px;
+}
+
+.form-group-modal input,
+.form-group-modal select {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8f9fd;
+    font-size: 13px;
+    outline: none;
+}
+
+.form-row-modal {
+    display: flex;
+    gap: 15px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn-modal-cancelar {
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-modal-salvar {
+    background: #ffda2d;
+    color: #2e1d75;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+
+/* Fundo do modal Cadastrar Cliente na tela de Vendas */
+.modal-cliente-overlay {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+    opacity: 1 !important;
+}
+
+.modal-cliente-container {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 1001;
+    isolation: isolate;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
+}
+
+.modal-cliente-container .modal-header,
+.modal-cliente-container .modal-body,
+.modal-cliente-container .modal-footer {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.modal-cliente-container input {
+    background-color: #fbfbfd !important;
+    opacity: 1 !important;
+}

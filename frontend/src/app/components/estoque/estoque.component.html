@@ -1,0 +1,206 @@
+<!-- ========================================== -->
+<!-- TOPO -->
+<!-- ========================================== -->
+<div class="top-header">
+  <h1>Controle de Estoque</h1>
+</div>
+
+<!-- ====================================================== -->
+<!-- CARD DE CADASTRO DE INSUMOS                            -->
+<!-- ====================================================== -->
+<div class="card-cadastro-estoque">
+  <form (ngSubmit)="cadastrarProduto()">
+    <div class="form-grid-estoque">
+
+      <div class="form-group flex-2">
+        <label>Nome do Insumo / Produto</label>
+        <input type="text" [(ngModel)]="novoProduto.nome" name="nome" placeholder="Ex: Xarope de Guaraná 5L" required />
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Categoria</label>
+        <select [(ngModel)]="novoProduto.categoria_id" name="categoria_id" required>
+          <!-- CORREÇÃO: Alinhado para ler a lista de categorias pura do banco, garantindo que apareçam mesmo sem produtos cadastrados ainda -->
+          <option *ngFor="let c of categorias" [value]="c.id || c.idCategoria">{{ c.nome }}</option>
+        </select>
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Fornecedor</label>
+        <select [(ngModel)]="novoProduto.fornecedor_id" name="fornecedor_id">
+          <option [ngValue]="null">Selecione um fornecedor</option>
+          <option *ngFor="let f of fornecedores" [ngValue]="f.idFornecedores || f.id">{{ f.nome_empresa }}</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="acoes-formulario-estoque">
+      <button type="button" class="btn-circulo-mais" title="Criar nova categoria" (click)="criarCategoria(); $event.preventDefault()">+</button>
+      <button type="submit" class="btn-confirmar-verde">Confirmar Produto</button>
+    </div>
+  </form>
+</div>
+
+<!-- ====================================================== -->
+<!-- MOVIMENTAÇÃO DE ESTOQUE (ENTRADAS / SAÍDAS / QUEBRAS)  -->
+<!-- ====================================================== -->
+<div class="card-movimentacao-estoque">
+  <div class="titulo-movimentacao">
+    <h2>Movimentação de Estoque</h2>
+    <p>Registre entradas, saídas e perdas por quebra ou vencimento.</p>
+  </div>
+
+  <form (ngSubmit)="registrarMovimentacao()">
+    <div class="form-grid-movimentacao">
+
+      <div class="form-group">
+        <label>Produto / Insumo</label>
+        <select [(ngModel)]="novaMovimentacao.produto_id" name="movimentacao_produto" required>
+          <option [ngValue]="null" disabled>Selecione um produto</option>
+          <option *ngFor="let p of produtos" [ngValue]="p.id || p.idProduto">{{ p.nome }} - Estoque: {{ p.quantidade }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Movimentação</label>
+        <select [(ngModel)]="novaMovimentacao.tipo" name="movimentacao_tipo" (ngModelChange)="alterarTipoMovimentacao()" required>
+          <option value="ENTRADA">Entrada</option>
+          <option value="SAIDA">Saída</option>
+          <option value="QUEBRA">Quebra / Vencimento</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Quantidade</label>
+        <input type="number" [(ngModel)]="novaMovimentacao.quantidade" name="movimentacao_quantidade" min="0.01" step="0.01" placeholder="0" required />
+      </div>
+
+      <div class="form-group">
+        <label>Data de Validade</label>
+        <input type="date" [(ngModel)]="novaMovimentacao.validade" name="movimentacao_validade" />
+      </div>
+
+    </div>
+
+    <div class="form-group" *ngIf="novaMovimentacao.tipo === 'QUEBRA'">
+      <label>Motivo da Quebra / Vencimento</label>
+      <input type="text" [(ngModel)]="novaMovimentacao.motivo" name="movimentacao_motivo" placeholder="Ex: Produto vencido, embalagem danificada..." required />
+    </div>
+
+    <div class="form-group">
+      <label>Observação</label>
+      <textarea [(ngModel)]="novaMovimentacao.observacao" name="movimentacao_observacao" rows="3" placeholder="Observações adicionais sobre a movimentação..."></textarea>
+    </div>
+
+    <div class="acoes-movimentacao">
+      <button type="submit" class="btn-confirmar-verde">Registrar Movimentação</button>
+    </div>
+  </form>
+</div>
+
+<!-- ====================================================== -->
+<!-- LISTAGEM DOS ITENS AGRUPADOS POR CATEGORIA             -->
+<!-- ====================================================== -->
+<div class="categorias-estoque-lista">
+  <div *ngFor="let bloco of categorias_com_produtos" class="secao-categoria">
+
+    <div class="cat-title-container">
+      <div class="yellow-accent-bar"></div>
+      <span class="cat-title-text">{{ bloco.categoria }}</span>
+      <button type="button" class="btn-excluir-categoria" (click)="excluirCategoria(bloco.id, bloco.categoria)" title="Excluir categoria">×</button>
+    </div>
+
+    <div class="grid-itens-estoque">
+      <div class="card-item-estoque" *ngFor="let p of bloco.produtos">
+
+        <div class="menu-produto-estoque">
+          <button type="button" class="btn-menu-produto" (click)="produtoMenuAberto = (produtoMenuAberto === p.id ? null : p.id)" title="Opções do produto">⋮</button>
+          <div class="menu-opcoes-produto" *ngIf="produtoMenuAberto === p.id">
+            <button type="button" (click)="alterarQuantidadeProduto(p)">Alterar quantidade</button>
+            <button type="button" class="opcao-excluir-produto" (click)="excluirProduto(p.id)">Excluir item</button>
+          </div>
+        </div>
+
+        <strong class="item-nome">{{ p.nome }}</strong>
+        <span class="badge-quantidade" [style.background-color]="p.quantidade <= p.estoque_minimo ? '#ff4757' : '#4a69bd'">
+          {{ p.quantidade }} Unidades
+        </span>
+
+      </div>
+
+      <div *ngIf="bloco.produtos?.length === 0" class="text-muted ms-3 p-2 font-italic" style="font-size: 0.9rem;">
+        Nenhum insumo cadastrado nesta categoria.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================== -->
+<!-- INVENTÁRIO GERAL (RF-10)                               -->
+<!-- ====================================================== -->
+<div class="card-inventario-generalo">
+  <div class="titulo-movimentacao">
+    <h2>Inventário Geral</h2>
+    <p>Consulte a situação atual de todos os itens cadastrados no estoque.</p>
+  </div>
+
+  <div *ngIf="produtos.length === 0" class="item-vazio-msg">
+    Nenhum item cadastrado no estoque.
+  </div>
+
+  <div class="tabela-inventario" *ngIf="produtos.length > 0">
+    <div class="linha-cabecalho-inventario">
+      <span>Produto</span>
+      <span>Categoria</span>
+      <span>Quantidade</span>
+      <span>Estoque Mínimo</span>
+      <span>Situação</span>
+    </div>
+
+    <div class="linha-inventario" *ngFor="let p of produtos">
+      <span><strong>{{ p.nome }}</strong></span>
+      <span>{{ p.cat?.nome || 'Insumo' }}</span>
+      <span>{{ p.quantidade }} Unidades</span>
+      <span>{{ p.estoque_minimo || 10 }}</span>
+      <span class="situacao-alerta-texto" [style.color]="p.quantidade <= (p.estoque_minimo || 10) ? '#ff4757' : '#2ed573'">
+        <strong>{{ p.quantidade <= (p.estoque_minimo || 10) ? '⚠️ Baixo' : '✅ Regular' }}</strong>
+      </span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- GIRO DE ESTOQUE - ÚLTIMOS 30 DIAS          -->
+<!-- ========================================== -->
+<div class="card-inventario-generalo">
+  <div class="titulo-movimentacao">
+    <h2>Giro de Estoque</h2>
+    <p>Consulte as entradas, saídas e quebras registradas nos últimos 30 dias.</p>
+  </div>
+
+  <div *ngIf="giroEstoque.length === 0" class="item-vazio-msg">
+    Nenhum dado de giro de estoque disponível.
+  </div>
+
+  <div class="tabela-inventario" *ngIf="giroEstoque.length > 0">
+    <div class="linha-cabecalho-inventario">
+      <span>Produto</span>
+      <span>Estoque Atual</span>
+      <span>Entradas (30 dias)</span>
+      <span>Saídas (30 dias)</span>
+      <span>Quebras (30 dias)</span>
+    </div>
+
+    <div class="linha-inventario" *ngFor="let item of giroEstoque">
+      <span><strong>{{ item.produto }}</strong></span>
+      <span>{{ item.estoque_atual }} unidades</span>
+      <span>{{ item.entradas_30_dias }}</span>
+      <span>{{ item.saidas_30_dias }}</span>
+      <span>{{ item.quebras_30_dias }}</span>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Financeiro - PremiArte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='7') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-box">
+                <span class="material-symbols-rounded">icecream</span>
+                <span class="menu-name">PremiArte</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('financeiro') }}" class="nav-icon active">
+                    <span class="material-symbols-rounded">dashboard</span>
+                    <span class="menu-name">Painel</span>
+                </a>
+                <a href="{{ url_for('vendas') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">shopping_cart</span>
+                    <span class="menu-name">Vendas</span>
+                </a>
+                <a href="{{ url_for('estoque') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">inventory_2</span>
+                    <span class="menu-name">Estoque</span>
+                </a>
+                <a href="{{ url_for('clientes') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">group</span>
+                    <span class="menu-name">Clientes</span>
+                </a>
+                <a href="{{ url_for('fornecedor_rota') }}" class="nav-icon">
+                    <span class="material-symbols-rounded">person_add</span>
+                    <span class="menu-name">Fornecedores</span>
+                </a>
+
+                <hr class="sidebar-divider">
+
+                <a href="{{ url_for('logout') }}" class="nav-icon logout-btn">
+                    <span class="material-symbols-rounded">logout</span>
+                    <span class="menu-name">Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h1>Painel de Controle</h1>
+            </div>
+
+            <!-- RETORNO DE ALERTAS DO FLASK -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <div class="layout-columns">
+                <div class="sessao-central">
+
+                    <!-- CARDS DE MÉTRICAS RÁPIDAS (COM CARD DE ESTOQUE CRÍTICO) -->
+                    <div class="grid-vendas">
+                        <div class="card-produto">
+                            <span class="material-symbols-rounded icon-metric-purple">monetization_on</span>
+                            <p class="metric-title">Faturamento Total</p>
+                            <h3 class="metric-value">R$ {{ "%.2f"|format(total) | replace('.', ',') }}</h3>
+                        </div>
+
+                        <div class="card-produto">
+                            <span class="material-symbols-rounded icon-metric-yellow">group</span>
+                            <p class="metric-title">Clientes Club</p>
+                            <h3 class="metric-value">{{ clientes }}</h3>
+                        </div>
+
+                        <div class="card-produto">
+                            <span class="material-symbols-rounded icon-metric-blue">inventory</span>
+                            <p class="metric-title">Insumos Cadastrados</p>
+                            <h3 class="metric-value">{{ produtos }}</h3>
+                        </div>
+
+                        <!-- INDICADOR DINÂMICO DE ESTOQUE CRÍTICO -->
+                        <div class="card-produto" style="{% if estoque_baixo %}border: 2px solid #ff6b6b;{% endif %}">
+                            <span class="material-symbols-rounded" style="color: #ff6b6b; font-size: 32px;">warning</span>
+                            <p class="metric-title">Estoque Crítico</p>
+                            <h3 class="metric-value" style="color: {% if estoque_baixo %}#d63031{% else %}var(--texto-escuro){% endif %};">
+                                {{ estoque_baixo|length }}
+                            </h3>
+                        </div>
+                    </div>
+
+                    <!-- QUADRO DETALHADO DE INSUMOS COM ESTOQUE BAIXO -->
+                    {% if estoque_baixo %}
+                    <div class="card" style="border-left: 6px solid #ff6b6b; margin-bottom: 25px; background: #fff5f5;">
+                        <div style="display: flex; align-items: center; gap: 10px; color: #d63031; margin-bottom: 12px;">
+                            <span class="material-symbols-rounded">warning</span>
+                            <h3 style="font-size: 16px; margin: 0; font-weight: 700;">Atenção: Insumos Atingindo Nível Crítico (≤ 10 un.)</h3>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            {% for p in estoque_baixo %}
+                            <span style="background: #ffe0e0; color: #c0392b; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                <span class="material-symbols-rounded" style="font-size: 16px;">inventory_2</span>
+                                {{ p.nome }} — <strong>{{ p.quantidade | int }} un.</strong>
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- TABELA DE ÚLTIMAS VENDAS -->
+                    <h2 class="categoria-titulo">Últimas Vendas Realizadas</h2>
+                    <div class="card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cód. Venda</th>
+                                    <th>Data / Hora</th>
+                                    <th>Método de Pagamento</th>
+                                    <th class="text-right">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for v in vendas_lista %}
+                                <tr>
+                                    <td><strong>#00{{ v.id }}</strong></td>
+                                    <td>{{ v.data.strftime('%d/%m/%Y - %H:%M') }}</td>
+                                    <td>{{ v.metodo_pagamento }}</td>
+                                    <td class="text-right highlight-price">R$ {{ "%.2f"|format(v.valor_total) | replace('.', ',') }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="mensagem-vazio-tabela">Nenhuma venda registrada no sistema ainda.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- BARRA LATERAL DIREITA: EMISSÃO DE RELATÓRIOS -->
+                <aside class="summary-panel">
+                    <div class="card">
+                        <h4>Exportar Relatórios</h4>
+                        <p class="summary-desc">Gere os arquivos em PDF oficiais do sistema para conferência de caixa:</p>
+
+                        <div class="report-links-container">
+                            <a href="{{ url_for('gerar_relatorio', periodo='diario') }}" class="btn-report">
+                                <span class="material-symbols-rounded">today</span>
+                                <span>Relatório Diário</span>
+                            </a>
+                            <a href="{{ url_for('gerar_relatorio', periodo='semanal') }}" class="btn-report">
+                                <span class="material-symbols-rounded">calendar_view_week</span>
+                                <span>Relatório Semanal</span>
+                            </a>
+                            <a href="{{ url_for('gerar_relatorio', periodo='mensal') }}" class="btn-report">
+                                <span class="material-symbols-rounded">calendar_month</span>
+                                <span>Relatório Mensal</span>
+                            </a>
+                            <a href="{{ url_for('gerar_relatorio', periodo='anual') }}" class="btn-report">
+                                <span class="material-symbols-rounded">history</span>
+                                <span>Relatório Anual</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-amarelo">
+                        <div class="card-header-flex">
+                            <h3>Gestão Integrada</h3>
+                            <span class="material-symbols-rounded">storefront</span>
+                        </div>
+                        <h2 class="subtitulo-club">PremiArte Web</h2>
+                        <p class="desc-club">Painel administrativo completo para controle eficiente de vendas, estoque e clientes.</p>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

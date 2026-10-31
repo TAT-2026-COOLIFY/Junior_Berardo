@@ -1,0 +1,157 @@
+.top-header {
+    margin-bottom: 25px;
+}
+
+.top-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.layout-columns {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.sessao-central {
+    flex: 1.6;
+}
+
+.painel-lateral {
+    flex: 1;
+    min-width: 320px;
+}
+
+.caixa-branca {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f5;
+}
+
+.caixa-branca h2,
+.caixa-branca h3 {
+    font-size: 19px;
+    font-weight: 800;
+    color: #2e1d75;
+    margin-bottom: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: #a0aec0;
+    padding: 12px 14px;
+    border-bottom: 1.5px solid #edf2f7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table td {
+    padding: 14px;
+    font-size: 13px;
+    color: #2d3436;
+    border-bottom: 1px solid #f8f9fd;
+    vertical-align: middle;
+}
+
+.mensagem-vazio-tabela {
+    text-align: center;
+    color: #a0aec0;
+    font-style: italic;
+    padding: 30px 0;
+}
+
+.form-cadastro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2e1d75;
+}
+
+.form-group input {
+    background: #f8f9fd;
+    border: 1.5px solid #edf2f7;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 13px;
+    color: #2d3436;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #2e1d75;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(46, 29, 117, 0.1);
+}
+
+.input-invalido {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.alerta-cnpj {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ef4444;
+    margin-top: 3px;
+}
+
+.btn-cadastrar {
+    background-color: #2e1d75;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 16px rgba(46, 29, 117, 0.25);
+}
+
+.btn-cadastrar:hover:not(:disabled) {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+
+.btn-cadastrar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-excluir {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+
+.btn-excluir:hover {
+    transform: scale(1.2);
+}

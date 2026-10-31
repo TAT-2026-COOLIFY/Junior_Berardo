@@ -1,0 +1,45 @@
+<!-- TELA DE LOGIN (TELA CHEIA) -->
+<div class="login-wrapper" *ngIf="isLoginPage()">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- SISTEMA OPERACIONAL (CARD BRANCO CENTRAL COM SIDEBAR ROXA) -->
+<div class="sistema-container" *ngIf="!isLoginPage()">
+
+  <!-- SIDEBAR LATERAL ROXA DE ÍCONES -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span>🍨</span>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="menu-item" title="Financeiro">
+        <span class="icon">📊</span>
+      </a>
+      <a routerLink="/vendas" routerLinkActive="active" class="menu-item" title="Frente de Caixa">
+        <span class="icon">🛒</span>
+      </a>
+      <a routerLink="/estoque" routerLinkActive="active" class="menu-item" title="Controle de Estoque">
+        <span class="icon">📦</span>
+      </a>
+      <a routerLink="/clientes" routerLinkActive="active" class="menu-item" title="Clube de Clientes">
+        <span class="icon">👥</span>
+      </a>
+      <a routerLink="/fornecedores" routerLinkActive="active" title="Fornecedores">
+        <span class="icon">🏢</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-sair">
+      <button (click)="fazerLogout()" class="menu-item btn-sair-item" title="Sair">
+        <span class="icon">🚪</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ÁREA BRANCA DE CONTEÚDO -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

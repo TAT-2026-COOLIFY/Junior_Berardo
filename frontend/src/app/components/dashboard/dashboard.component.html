@@ -1,0 +1,103 @@
+<!-- ========================================== -->
+<!-- TOPO -->
+<!-- ========================================== -->
+<div class="top-header">
+  <h1>Painel Financeiro</h1>
+</div>
+
+<!-- ========================================== -->
+<!-- CONTEÚDO PRINCIPAL (DASHBOARD) -->
+<!-- ========================================== -->
+<div class="layout-columns">
+
+  <!-- SESSÃO CENTRAL (INDICADORES E TABELA) -->
+  <div class="sessao-central">
+
+    <div class="caixa-branca margin-resumo-vendas">
+      <h2>Resumo de Vendas</h2>
+      <p class="subtitulo-desempenho">
+        Indicadores de desempenho das últimas 24 horas
+      </p>
+
+      <div class="grid-cards-financeiros">
+        <!-- Card Métrico: Faturamento Financeiro -->
+        <div class="card card-faturamento-bg">
+          <span class="label-card-metrica label-azul-faturamento">FATURAMENTO TOTAL</span>
+          <h2 class="valor-card-metrica">R$ {{ resumo.faturamento_ultimas_24h.toFixed(2).replace('.', ',') }}</h2>
+        </div>
+
+        <!-- Card Métrico: Quantidade Quantitativa -->
+        <div class="card card-vendas-bg">
+          <span class="label-card-metrica label-verde-vendas">VENDAS REALIZADAS</span>
+          <h2 class="valor-card-metrica">{{ resumo.total_vendas_ultimas_24h }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela Histórica de Notas Fiscais -->
+    <div class="caixa-branca">
+      <h2>Histórico de Transações</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Pagamento</th>
+            <th class="text-right">Valor</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let v of vendas">
+            <td>{{ v.data }}</td>
+            <td>{{ v.metodo_pagamento }}</td>
+            <td class="text-right text-bold text-verde-faturado">
+              R$ {{ v.valor_total.toFixed(2).replace('.', ',') }}
+            </td>
+            <td class="text-center">
+              <button type="button" (click)="excluirVenda(v.id)" class="btn-excluir-venda-tabela">
+                Excluir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Estado Vazio da Listagem Tabular -->
+          <tr *ngIf="vendas.length === 0">
+            <td colspan="4" class="mensagem-vazio-tabela">
+              Nenhuma venda registrada ainda no período selecionado.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAINEL LATERAL (CENTRAL DE EXPORTAÇÃO IMPRESSA) -->
+  <div class="painel-lateral">
+    <div class="card">
+      <h3>Relatórios do Sistema</h3>
+
+      <div class="report-links-container">
+        <!-- Gatilho de Emissão Geral -->
+        <a class="btn-report" (click)="gerarPdfVendas('geral')">
+          <span class="material-symbols-rounded">picture_as_pdf</span>
+          Exportar Relatório Geral (PDF)
+        </a>
+
+        <!-- Gatilho de Emissão Semanal -->
+        <a class="btn-report" (click)="gerarPdfVendas('semanal')">
+          <span class="material-symbols-rounded">calendar_view_week</span>
+          Relatório Semanal (7 dias)
+        </a>
+
+        <!-- Gatilho de Emissão Mensal -->
+        <a class="btn-report" (click)="gerarPdfVendas('mensal')">
+          <span class="material-symbols-rounded">calendar_month</span>
+          Relatório Mensal (30 dias)
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,109 @@
+<!-- ========================================== -->
+<!-- TOPO -->
+<!-- ========================================== -->
+<div class="top-header">
+  <h1>Gestão de Fornecedores</h1>
+</div>
+
+<!-- ========================================== -->
+<!-- CONTEÚDO PRINCIPAL -->
+<!-- ========================================== -->
+<div class="layout-columns">
+
+  <!-- SESSÃO CENTRAL: TABELA DE FORNECEDORES -->
+  <div class="sessao-central">
+    <div class="caixa-branca">
+      <h2>Fornecedores Homologados</h2>
+      <p class="subtitulo-desempenho">Lista de parceiros e distribuidores cadastrados</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Razão Social</th>
+            <th>CNPJ</th>
+            <th>Contato</th>
+            <th>Celular</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let f of fornecedores">
+            <td><strong>{{ f.nome_empresa }}</strong></td>
+            <td>{{ f.cnpj }}</td>
+            <td>{{ f.contato || '-' }}</td>
+            <td>{{ f.celular || '-' }}</td>
+
+            <td class="text-right">
+              <button class="btn-editar" (click)="editarFornecedor(f)" title="Editar fornecedor">
+                ✏️
+              </button>
+
+              <button class="btn-excluir" (click)="excluirFornecedor(f.idFornecedores || f.id)" title="Excluir fornecedor">
+                🗑️
+              </button>
+            </td>
+          </tr>
+
+          <!-- ESTADO VAZIO DA LISTAGEM -->
+          <tr *ngIf="fornecedores.length === 0">
+            <td colspan="5" class="mensagem-vazio-tabela">
+              Nenhum fornecedor cadastrado até o momento.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAINEL LATERAL: FORMULÁRIO COMPACTO -->
+  <div class="painel-lateral">
+    <div class="caixa-branca">
+      <h3>{{ editandoFornecedor ? 'Editar Fornecedor' : 'Novo Fornecedor' }}</h3>
+
+      <form (ngSubmit)="salvarFornecedor()" class="form-cadastro">
+
+        <div class="form-group">
+          <label>Razão Social / Nome Fantasia *</label>
+          <input type="text" [(ngModel)]="novoFornecedor.nome_empresa" name="nome_empresa" placeholder="Ex: Açaí Vale do Sol Ltda" maxlength="150" required />
+        </div>
+
+        <div class="form-group">
+          <label>CNPJ *</label>
+          <input type="text" [ngModel]="novoFornecedor.cnpj" (input)="aplicarMascaraCNPJ($event)" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" [class.input-invalido]="cnpjInvalido" required />
+        </div>
+
+        <div class="form-group">
+          <label>Pessoa de Contato</label>
+          <input type="text" [(ngModel)]="novoFornecedor.contato" name="contato" placeholder="Ex: Roberto Mendes" maxlength="100" />
+        </div>
+
+        <div class="form-group">
+          <label>Celular / WhatsApp</label>
+          <input type="text" [ngModel]="novoFornecedor.celular" (input)="aplicarMascaraCelular($event)" name="celular" placeholder="(18) 99999-9999" maxlength="15" [class.input-invalido]="celularInvalido" />
+        </div>
+
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" [(ngModel)]="novoFornecedor.email" (input)="validarEmailEmTempoReal()" name="email" placeholder="contato@fornecedor.com.br" maxlength="100" [class.input-invalido]="emailInvalido" />
+        </div>
+
+        <div class="form-group">
+          <label>Endereço Completo</label>
+          <input type="text" [(ngModel)]="novoFornecedor.endereco" name="endereco" placeholder="Rua, número e cidade" maxlength="200" />
+        </div>
+
+        <!-- BOTÕES FORMULÁRIO -->
+        <button type="submit" class="btn-cadastrar" [disabled]="cnpjInvalido || emailInvalido || celularInvalido">
+          {{ editandoFornecedor ? 'SALVAR ALTERAÇÕES' : 'CADASTRAR FORNECEDOR' }}
+        </button>
+
+        <button *ngIf="editandoFornecedor" type="button" class="btn-cancelar" (click)="cancelarEdicao()">
+          CANCELAR
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+</div>
