@@ -1,10 +1,12 @@
 services:
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "5000:5000"
     volumes:
-      - ./backend:/app/backend  # Garante que o banco SQLite não seja apagado
+      - ./backend:/app/backend
 
   frontend:
     build: ./frontend

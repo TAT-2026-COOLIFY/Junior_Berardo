@@ -2,14 +2,11 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copia todo o projeto, mantendo a estrutura original
+COPY . .
 
-# Copia os ficheiros para dentro de uma subpasta 'backend'
-COPY . ./backend
+# Instala usando o caminho correto
+RUN pip install --no-cache-dir -r backend/requirements.txt gunicorn
 
-# Avisa o Flask qual é a pasta principal do sistema
-ENV FLASK_APP=backend
-
-EXPOSE 5000
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Inicia o servidor chamando o módulo backend
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "backend:app"]
