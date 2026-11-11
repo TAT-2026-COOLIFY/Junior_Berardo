@@ -1,6 +1,16 @@
-frontend:
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app/backend
+
+  frontend:
     build: ./frontend
     ports:
-      - "4201:80"  # Agora mapeamos a 4201 para a porta 80 do Nginx
+      - "4201:80"
     depends_on:
       - backend
