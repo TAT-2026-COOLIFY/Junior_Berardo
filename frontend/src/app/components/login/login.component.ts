@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +12,11 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  // URL apontando para o seu backend no Coolify (e funciona local se trocar)
+  private readonly API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:5000/api'
+    : 'http://junior-back.187.33.201.107.sslip.io/api';
+
   email: string = '';
   senha: string = '';
   mensagemErro: string = '';
@@ -27,7 +32,7 @@ export class LoginComponent {
   sucessoRecuperacao: string = '';
   carregandoRecuperacao: boolean = false;
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   fazerLogin(): void {
     if (!this.email || !this.senha) {
@@ -39,7 +44,7 @@ export class LoginComponent {
     this.mensagemErro = '';
     this.mensagemSucesso = '';
 
-    this.apiService.login({ email: this.email, senha: this.senha }).subscribe({
+    this.http.post(`${this.API_URL}/login`, { email: this.email, senha: this.senha }).subscribe({
       next: (res: any) => {
         this.carregando = false;
         if (res.sucesso) {
@@ -86,7 +91,7 @@ export class LoginComponent {
     }
 
     this.carregandoRecuperacao = true;
-    this.apiService.redefinirSenha({
+    this.http.post(`${this.API_URL}/redefinir-senha`, {
       email: this.emailRecuperacao,
       nova_senha: this.novaSenha
     }).subscribe({

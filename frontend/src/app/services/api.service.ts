@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
 
-    private readonly baseUrl = 'http://127.0.0.1:5000/api';
+    private readonly baseUrl = 'http://junior-back.187.33.201.107.sslip.io/api';
 
     constructor(private http: HttpClient) {}
 
