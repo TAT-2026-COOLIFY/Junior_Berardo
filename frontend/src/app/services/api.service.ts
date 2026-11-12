@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -7,9 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
 
-  private readonly baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:5000/api'
-    : '/api';
+  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
@@ -161,7 +159,8 @@ export class ApiService {
   downloadRelatorioPdf(periodo: string = 'geral'): void {
     let p = 'geral';
     if (periodo.toLowerCase().includes('semana')) p = 'semana';
-    if (periodo.toLowerCase().includes('mes') || periodo.toLowerCase().includes('mês')) p = 'mes';
+    if (periodo.toLowerCase().includes('mes') || periodo.toLowerCase().includes('mÃªs')) p = 'mes';
     window.open(`${this.baseUrl}/relatorios/vendas/pdf?periodo=${p}`, '_blank');
   }
 }
+

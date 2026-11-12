@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,9 +13,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LoginComponent {
   // Usa localhost no seu PC e rota relativa '/api' no servidor Coolify
-  private readonly API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:5000/api'
-    : '/api';
+  private readonly API_URL = '/api';
 
   email: string = '';
   senha: string = '';
@@ -82,11 +80,11 @@ export class LoginComponent {
       return;
     }
     if (!this.novaSenha || this.novaSenha.length < 4) {
-      this.erroRecuperacao = 'A nova senha deve ter no mínimo 4 caracteres.';
+      this.erroRecuperacao = 'A nova senha deve ter no mÃ­nimo 4 caracteres.';
       return;
     }
     if (this.novaSenha !== this.confirmarNovaSenha) {
-      this.erroRecuperacao = 'As senhas não coincidem!';
+      this.erroRecuperacao = 'As senhas nÃ£o coincidem!';
       return;
     }
 
@@ -103,7 +101,7 @@ export class LoginComponent {
             this.fecharModalEsqueci();
             this.email = this.emailRecuperacao;
             this.senha = '';
-            this.mensagemSucesso = 'Senha redefinida com sucesso! Faça login com a nova senha.';
+            this.mensagemSucesso = 'Senha redefinida com sucesso! FaÃ§a login com a nova senha.';
           }, 1500);
         } else {
           this.erroRecuperacao = res.erro || 'Erro ao redefinir senha.';
@@ -111,8 +109,9 @@ export class LoginComponent {
       },
       error: (err: any) => {
         this.carregandoRecuperacao = false;
-        this.erroRecuperacao = err.error?.erro || 'E-mail não encontrado ou erro no servidor.';
+        this.erroRecuperacao = err.error?.erro || 'E-mail nÃ£o encontrado ou erro no servidor.';
       }
     });
   }
 }
+
