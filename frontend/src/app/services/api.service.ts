@@ -3,187 +3,165 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ApiService {
 
-    private readonly baseUrl = 'http://junior-back.187.33.201.107.sslip.io/api';
+  private readonly baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:5000/api'
+    : '/api';
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
+  login(credenciais: { email: string; senha: string; }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/login`, credenciais);
+  }
 
-    // AUTENTICAÇÃO E RECUPERAÇÃO
+  redefinirSenha(dados: { email: string; nova_senha: string; }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/redefinir-senha`, dados);
+  }
 
-    login(credenciais: { email: string; senha: string; }): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/login`, credenciais);
-    }
+  getDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/dashboard`);
+  }
 
-    redefinirSenha(dados: { email: string; nova_senha: string; }): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/redefinir-senha`, dados);
-    }
+  getDashboard24h(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/dashboard/financeiro-24h`);
+  }
 
+  getCategorias(tipo?: string): Observable<any> {
+    const url = tipo ? `${this.baseUrl}/categorias?tipo=${tipo}` : `${this.baseUrl}/categorias`;
+    return this.http.get<any>(url);
+  }
 
-    // DASHBOARD E CATEGORIAS
+  getCategoriasEstoque(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/categorias?tipo=ESTOQUE`);
+  }
 
-    getDashboard(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/dashboard`);
-    }
+  getCategoriasCardapio(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/categorias?tipo=VENDA`);
+  }
 
-    getDashboard24h(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/dashboard/financeiro-24h`);
-    }
+  cadastrarCategoria(categoria: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/categorias`, categoria);
+  }
 
-    getCategorias(tipo?: string): Observable<any> {
-        const url = tipo ? `${this.baseUrl}/categorias?tipo=${tipo}` : `${this.baseUrl}/categorias`;
-        return this.http.get<any>(url);
-    }
+  deletarCategoria(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/categorias/${id}`);
+  }
 
-    getCategoriasEstoque(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/categorias?tipo=ESTOQUE`);
-    }
+  getCardapio(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/cardapio`);
+  }
 
-    getCategoriasCardapio(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/categorias?tipo=VENDA`);
-    }
+  cadastrarProdutoCardapio(produto: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/cardapio`, produto);
+  }
 
-    cadastrarCategoria(categoria: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/categorias`, categoria);
-    }
+  atualizarPrecoProduto(id: number, preco: number): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/cardapio/${id}/preco`, { preco });
+  }
 
-    deletarCategoria(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/categorias/${id}`);
-    }
+  atualizarIngredientesProduto(id: number, ingredientes: string): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/cardapio/${id}/ingredientes`, { ingredientes });
+  }
 
-    // ==========================================
-    // FRENTE DE CAIXA / CARDÁPIO
-    // ==========================================
-    getCardapio(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/cardapio`);
-    }
+  atualizarProdutoCardapio(id: number, produto: { preco?: number; ingredientes?: string; }): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/cardapio/${id}`, produto);
+  }
 
-    cadastrarProdutoCardapio(produto: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/cardapio`, produto);
-    }
+  excluirProdutoCardapio(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/cardapio/${id}`);
+  }
 
-    atualizarPrecoProduto(id: number, preco: number): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/cardapio/${id}/preco`, { preco });
-    }
+  getEstoque(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/estoque`);
+  }
 
-    atualizarIngredientesProduto(id: number, ingredientes: string): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/cardapio/${id}/ingredientes`, { ingredientes });
-    }
+  cadastrarProdutoEstoque(produto: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/estoque`, produto);
+  }
 
-    atualizarProdutoCardapio(id: number, produto: { preco?: number; ingredientes?: string; }): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/cardapio/${id}`, produto);
-    }
+  atualizarProdutoEstoque(id: number, produto: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/estoque/${id}`, produto);
+  }
 
-    excluirProdutoCardapio(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/cardapio/${id}`);
-    }
+  deletarProdutoEstoque(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/estoque/${id}`);
+  }
 
+  registrarMovimentacao(movimentacao: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/estoque/movimentacoes`, movimentacao);
+  }
 
-    // ESTOQUE
+  listarMovimentacoes(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/estoque/movimentacoes`);
+  }
 
-    getEstoque(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/estoque`);
-    }
+  getGiroEstoque(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/estoque/giro`);
+  }
 
-    cadastrarProdutoEstoque(produto: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/estoque`, produto);
-    }
+  getVendas(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/vendas`);
+  }
 
-    atualizarProdutoEstoque(id: number, produto: any): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/estoque/${id}`, produto);
-    }
+  registrarVenda(venda: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/vendas`, venda);
+  }
 
-    deletarProdutoEstoque(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/estoque/${id}`);
-    }
+  excluirVenda(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/vendas/${id}`);
+  }
 
-    registrarMovimentacao(movimentacao: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/estoque/movimentacoes`, movimentacao);
-    }
+  getClientes(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/clientes`);
+  }
 
-    listarMovimentacoes(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/estoque/movimentacoes`);
-    }
+  cadastrarCliente(cliente: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clientes`, cliente);
+  }
 
-    getGiroEstoque(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/estoque/giro`);
-    }
+  registrarClienteNoCaixa(cliente: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clientes`, cliente);
+  }
 
+  atualizarCliente(id: number, cliente: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/clientes/${id}`, cliente);
+  }
 
-    // VENDAS
+  excluirCliente(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/clientes/${id}`);
+  }
 
-    getVendas(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/vendas`);
-    }
+  atualizarPremiacaoCliente(id: number, premiacao: string): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/clientes/${id}/premiacao`, { premiacao });
+  }
 
-    registrarVenda(venda: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/vendas`, venda);
-    }
+  resgatarPremiacaoCliente(id: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clientes/${id}/resgatar-premiacao`, {});
+  }
 
-    excluirVenda(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/vendas/${id}`);
-    }
+  getFornecedores(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/fornecedores`);
+  }
 
-    // ==========================================
-    // CLIENTES
-    // ==========================================
-    getClientes(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/clientes`);
-    }
+  cadastrarFornecedor(fornecedor: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/fornecedores`, fornecedor);
+  }
 
-    cadastrarCliente(cliente: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/clientes`, cliente);
-    }
+  atualizarFornecedor(id: number, fornecedor: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/fornecedores/${id}`, fornecedor);
+  }
 
-    registrarClienteNoCaixa(cliente: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/clientes`, cliente);
-    }
+  deletarFornecedor(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/fornecedores/${id}`);
+  }
 
-    atualizarCliente(id: number, cliente: any): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/clientes/${id}`, cliente);
-    }
-
-    excluirCliente(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/clientes/${id}`);
-    }
-
-    atualizarPremiacaoCliente(id: number, premiacao: string): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/clientes/${id}/premiacao`, { premiacao });
-    }
-
-    resgatarPremiacaoCliente(id: number): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/clientes/${id}/resgatar-premiacao`, {});
-    }
-
-
-    // FORNECEDORES
-
-    getFornecedores(): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}/fornecedores`);
-    }
-
-    cadastrarFornecedor(fornecedor: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/fornecedores`, fornecedor);
-    }
-
-    atualizarFornecedor(id: number, fornecedor: any): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/fornecedores/${id}`, fornecedor);
-    }
-
-    deletarFornecedor(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.baseUrl}/fornecedores/${id}`);
-    }
-
-
-    // RELATÓRIOS PDF
-
-    downloadRelatorioPdf(periodo: string = 'geral'): void {
-        let p = 'geral';
-        if (periodo.toLowerCase().includes('semana')) p = 'semana';
-        if (periodo.toLowerCase().includes('mes') || periodo.toLowerCase().includes('mês')) p = 'mes';
-        window.open(`${this.baseUrl}/relatorios/vendas/pdf?periodo=${p}`, '_blank');
-    }
+  downloadRelatorioPdf(periodo: string = 'geral'): void {
+    let p = 'geral';
+    if (periodo.toLowerCase().includes('semana')) p = 'semana';
+    if (periodo.toLowerCase().includes('mes') || periodo.toLowerCase().includes('mês')) p = 'mes';
+    window.open(`${this.baseUrl}/relatorios/vendas/pdf?periodo=${p}`, '_blank');
+  }
 }

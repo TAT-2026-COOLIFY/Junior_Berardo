@@ -12,10 +12,10 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  // URL apontando para o seu backend no Coolify (e funciona local se trocar)
+  // Usa localhost no seu PC e rota relativa '/api' no servidor Coolify
   private readonly API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000/api'
-    : 'http://junior-back.187.33.201.107.sslip.io/api';
+    : '/api';
 
   email: string = '';
   senha: string = '';
